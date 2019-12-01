@@ -36,22 +36,37 @@ namespace DeliveryFinder
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                //textBox2.Text = response.Content;
-
+                SearchResult searchResult = new SearchResult();
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(response.Content);
+                var subDoc = doc["tracking_info"];
+                searchResult.itemName = subDoc["item_name"].InnerText;
+                searchResult.reciverAddr = subDoc["reciver_addr"].InnerText;
+                searchResult.reciverName = subDoc["reciver_name"].InnerText;
+                searchResult.senderName = subDoc["sender_name"].InnerText;
 
-                //XmlNodeList xmlNodeList = doc.GetElementsByTagName("tracking_details");
-
-                //foreach(XmlNode i in xmlNodeList)
-                //{
-
-                //}
-                XmlElement elements;
-                elements = doc["tracking_info"];
-                foreach (XmlNode i in elements)
+                XmlNodeList trackingDetails = subDoc.GetElementsByTagName("tracking_details");
+                foreach(XmlNode i in trackingDetails)
                 {
-                    textBox2.Text += i.InnerText + "\r\n";
+                    searchResult.trackingDetails.Add(new trackingDetail()
+                    {
+                        transKind = i["trans_kind"].InnerText,
+                        transTelno = i["trans_telno"].InnerText,
+                        transTime = i["trans_time"].InnerText,
+                        transWhere = i["trans_where"].InnerText
+                    });
+                }
+                textBox2.Text += "ItemName: " + searchResult.itemName + "\r\n" + "\r\n";
+                textBox2.Text += "ReceiverAddress: " + searchResult.reciverAddr + "\r\n" + "\r\n";
+                textBox2.Text += "ReceiverNmae: " + searchResult.reciverName + "\r\n" + "\r\n";
+                textBox2.Text += "SenderName: " + searchResult.senderName + "\r\n" + "\r\n";
+
+                foreach(var i in searchResult.trackingDetails)
+                {
+                    textBox2.Text += "TransKind: " + i.transKind + "\r\n";
+                    textBox2.Text += "TransTelno: " + i.transTelno + "\r\n";
+                    textBox2.Text += "TransTime: " + i.transTime + "\r\n";
+                    textBox2.Text += "TransWhere: " + i.transWhere + "\r\n" + "\r\n";
                 }
             }
             else
@@ -79,5 +94,21 @@ namespace DeliveryFinder
                 comboBox1.SelectedIndex = 0;
             }
         }
+    }
+    class SearchResult
+    {
+        //private string invoiceNum;
+        public string itemName;
+        public string reciverName;
+        public string reciverAddr;
+        public string senderName;
+        public List<trackingDetail> trackingDetails = new List<trackingDetail>();
+    }
+    public class trackingDetail
+    {
+        public string transKind;
+        public string transTelno;
+        public string transTime;
+        public string transWhere;
     }
 }
