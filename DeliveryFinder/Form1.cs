@@ -53,9 +53,13 @@ namespace DeliveryFinder
                         transKind = i["trans_kind"].InnerText,
                         transTelno = i["trans_telno"].InnerText,
                         transTime = i["trans_time"].InnerText,
-                        transWhere = i["trans_where"].InnerText
-                    });
+                        transWhere = i["trans_where"].InnerText,
+                        manName = i["manName"].InnerText,
+                        level = Convert.ToInt32(i["level"].InnerText)
+                    }); 
                 }
+                searchResult.trackingDetails.OrderBy(x => x.level);
+
                 textBox2.Text += "ItemName: " + searchResult.itemName + "\r\n" + "\r\n";
                 textBox2.Text += "ReceiverAddress: " + searchResult.reciverAddr + "\r\n" + "\r\n";
                 textBox2.Text += "ReceiverNmae: " + searchResult.reciverName + "\r\n" + "\r\n";
@@ -63,10 +67,12 @@ namespace DeliveryFinder
 
                 foreach(var i in searchResult.trackingDetails)
                 {
+                    textBox2.Text += "level: " + i.level + "\r\n" + "\r\n";
                     textBox2.Text += "TransKind: " + i.transKind + "\r\n";
                     textBox2.Text += "TransTelno: " + i.transTelno + "\r\n";
                     textBox2.Text += "TransTime: " + i.transTime + "\r\n";
-                    textBox2.Text += "TransWhere: " + i.transWhere + "\r\n" + "\r\n";
+                    textBox2.Text += "TransWhere: " + i.transWhere + "\r\n";
+                    textBox2.Text += "ManName: " + i.manName + "\r\n";
                 }
             }
             else
@@ -104,11 +110,13 @@ namespace DeliveryFinder
         public string senderName;
         public List<trackingDetail> trackingDetails = new List<trackingDetail>();
     }
-    public class trackingDetail
+    class trackingDetail
     {
+        public string manName;
         public string transKind;
         public string transTelno;
         public string transTime;
         public string transWhere;
+        public int level;
     }
 }
